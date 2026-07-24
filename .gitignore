@@ -1,0 +1,44 @@
+# ---- secrets ----
+.env
+*.pem
+*.key
+.aws/
+
+# ---- local data ----
+data/
+*.csv
+*.parquet
+*.json
+!step_functions/*.json
+!config/*.yaml
+!tests/sample_data/*
+
+# ---- python ----
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- terraform ----
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# ---- os / editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---- logs ----
+*.log
+logs/
