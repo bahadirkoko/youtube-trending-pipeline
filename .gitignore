@@ -1,44 +1,90 @@
-# ---- secrets ----
-.env
-*.pem
-*.key
-.aws/
+# ============================================================
+# Terraform
+# ============================================================
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+# Real variable files may hold secrets/account IDs; commit only the examples
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+# NOTE: .terraform.lock.hcl is intentionally NOT ignored. Commit it.
 
-# ---- local data ----
-data/
-*.csv
-*.parquet
-*.json
-!step_functions/*.json
-!config/*.yaml
-!tests/sample_data/*
-
-# ---- python ----
-__pycache__/
-*.pyc
-*.pyo
+# ============================================================
+# Python
+# ============================================================
 .venv/
 venv/
 env/
+__pycache__/
+*.py[cod]
 *.egg-info/
+.eggs/
+dist/
+build/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# ============================================================
+# Lambda / Glue packaging artifacts (built by Terraform or scripts)
+# ============================================================
+*.zip
+*.whl
+.build/
+package/
+
+# ============================================================
+# Secrets and credentials - NEVER commit
+# ============================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets*
+.aws/
+credentials
+*.credentials
+
+# ============================================================
+# Data (keep small reference files; ignore bulk data)
+# ============================================================
+data/sample/*.csv
+data/raw/
+data/tmp/
+*.parquet
+*.csv.gz
+!data/reference/*.json
+
+# ============================================================
+# Jupyter
+# ============================================================
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 
-# ---- terraform ----
-*.tfstate
-*.tfstate.*
-.terraform/
-.terraform.lock.hcl
-*.tfvars
-!*.tfvars.example
-crash.log
-
-# ---- os / editor ----
+# ============================================================
+# OS / IDE
+# ============================================================
 .DS_Store
 Thumbs.db
-.vscode/
 .idea/
-
-# ---- logs ----
-*.log
-logs/
+.vscode/*
+!.vscode/settings.json.example
+*.swp
+*.swo
+*~
