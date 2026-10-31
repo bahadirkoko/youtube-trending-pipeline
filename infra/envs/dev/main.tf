@@ -58,3 +58,20 @@ module "ingestion" {
   # dev only: delete the secret immediately on destroy so apply/destroy cycles work
   secret_recovery_window_days = 0
 }
+
+# Phase 3: category reference data, JSON (Bronze) -> Parquet (Silver)
+module "json_to_parquet" {
+  source = "../../modules/json_to_parquet"
+
+  project_name       = var.project_name
+  environment        = local.environment
+  lambda_role_arn    = module.iam.role_arns["lambda"]
+  bronze_bucket_name = module.data_lake.bucket_names["bronze"]
+  silver_bucket_name = module.data_lake.bucket_names["silver"]
+  source_dir         = "${path.root}/../../../src/lambdas/json_to_parquet"
+
+  # AWS SDK for pandas (library 3.18.0), Python 3.12, x86_64, us-east-1.
+  # This ARN is specific to the region and Python version. See:
+  # https://aws-sdk-pandas.readthedocs.io/en/stable/layers.html
+  pandas_layer_arn = "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python312:32"
+}

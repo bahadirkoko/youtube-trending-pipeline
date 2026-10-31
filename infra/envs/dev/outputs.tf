@@ -24,3 +24,7 @@ output "ingestion_function_name" {
 output "youtube_secret_name" {
   value = module.ingestion.secret_name
 }
+
+output "json_to_parquet_function_name" {
+  value = module.json_to_parquet.function_name
+}
