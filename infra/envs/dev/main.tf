@@ -95,3 +95,16 @@ module "athena" {
   # dev only: destroy even if the workgroup has saved queries
   force_destroy = true
 }
+
+# Phase 3: Glue job, Bronze (API JSON + Kaggle CSV) -> Silver trending_videos
+module "glue_jobs" {
+  source = "../../modules/glue_jobs"
+
+  project_name        = var.project_name
+  environment         = local.environment
+  glue_role_arn       = module.iam.role_arns["glue"]
+  scripts_bucket_name = module.data_lake.bucket_names["scripts"]
+  bronze_bucket_name  = module.data_lake.bucket_names["bronze"]
+  silver_bucket_name  = module.data_lake.bucket_names["silver"]
+  script_path         = "${path.root}/../../../src/glue_jobs/bronze_to_silver.py"
+}

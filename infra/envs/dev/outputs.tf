@@ -32,3 +32,7 @@ output "json_to_parquet_function_name" {
 output "athena_workgroup" {
   value = module.athena.workgroup_name
 }
+
+output "bronze_to_silver_job_name" {
+  value = module.glue_jobs.bronze_to_silver_job_name
+}
