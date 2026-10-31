@@ -36,3 +36,7 @@ output "athena_workgroup" {
 output "bronze_to_silver_job_name" {
   value = module.glue_jobs.bronze_to_silver_job_name
 }
+
+output "data_quality_function_name" {
+  value = module.data_quality.function_name
+}

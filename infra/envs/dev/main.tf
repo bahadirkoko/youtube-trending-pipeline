@@ -76,6 +76,20 @@ module "json_to_parquet" {
   pandas_layer_arn = "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python312:32"
 }
 
+module "data_quality" {
+  source = "../../modules/data_quality"
+
+  project_name       = var.project_name
+  environment        = local.environment
+  lambda_role_arn    = module.iam.role_arns["lambda"]
+  silver_bucket_name = module.data_lake.bucket_names["silver"]
+  alerts_topic_arn   = module.messaging.alerts_topic_arn
+  source_dir         = "${path.root}/../../../src/lambdas/data_quality"
+
+  # Same AWS SDK for pandas layer as json_to_parquet (provides pyarrow).
+  pandas_layer_arn = "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python312:32"
+}
+
 # Phase 3: Silver tables in the Glue catalog (queryable from Athena)
 module "silver_tables" {
   source = "../../modules/silver_tables"

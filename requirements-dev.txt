@@ -29,7 +29,7 @@ python-dotenv>=1.0        # load a local .env for development
 pytest>=8.0
 pytest-cov>=5.0
 pytest-mock>=3.12
-moto[s3,sns,glue,athena]>=5.0   # fake AWS services for unit tests
+moto[s3,secretsmanager,sns,sqs,glue,athena]>=5.0   # fake AWS services for unit tests
 
 # ---------- Code quality ----------
 ruff>=0.5                 # linter + formatter (replaces flake8/black/isort)

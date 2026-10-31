@@ -42,7 +42,8 @@ def spark(job):
     os.environ["PYSPARK_PYTHON"] = sys.executable
     os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
     session = (
-        SparkSession.Builder().master("local[2]")
+        SparkSession.Builder()
+        .master("local[2]")
         .appName("bronze-to-silver-tests")
         .config("spark.ui.enabled", "false")
         .config("spark.sql.shuffle.partitions", "2")
