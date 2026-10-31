@@ -28,3 +28,7 @@ output "youtube_secret_name" {
 output "json_to_parquet_function_name" {
   value = module.json_to_parquet.function_name
 }
+
+output "athena_workgroup" {
+  value = module.athena.workgroup_name
+}

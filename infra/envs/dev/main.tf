@@ -75,3 +75,23 @@ module "json_to_parquet" {
   # https://aws-sdk-pandas.readthedocs.io/en/stable/layers.html
   pandas_layer_arn = "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python312:32"
 }
+
+# Phase 3: Silver tables in the Glue catalog (queryable from Athena)
+module "silver_tables" {
+  source = "../../modules/silver_tables"
+
+  database_name      = module.glue_catalog.database_names["silver"]
+  silver_bucket_name = module.data_lake.bucket_names["silver"]
+}
+
+# Phase 3: Athena workgroup (results location + scan limit)
+module "athena" {
+  source = "../../modules/athena"
+
+  project_name        = var.project_name
+  environment         = local.environment
+  results_bucket_name = module.data_lake.bucket_names["athena"]
+
+  # dev only: destroy even if the workgroup has saved queries
+  force_destroy = true
+}
