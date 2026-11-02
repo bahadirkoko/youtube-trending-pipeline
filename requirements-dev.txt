@@ -47,4 +47,4 @@ nbstripout>=0.7           # strips notebook outputs before commit
 # Heavy download and needs Java 11/17 installed. Uncomment only when you
 # start testing the Glue jobs on your machine.
 # Glue 4.0 uses Spark 3.3, Glue 5.0 uses Spark 3.5.
-pyspark==3.5.*
+pyspark==3.5.4
