@@ -132,3 +132,26 @@ module "glue_jobs" {
   gold_bucket_name = module.data_lake.bucket_names["gold"]
   gold_script_path = "${path.root}/../../../src/glue_jobs/silver_to_gold.py"
 }
+
+
+# Phase 6: Step Functions state machine + EventBridge schedule
+module "orchestration" {
+  source = "../../modules/orchestration"
+
+  project_name = var.project_name
+  environment  = local.environment
+  region       = var.aws_region
+
+  sfn_role_arn     = module.iam.role_arns["sfn"]
+  events_role_arn  = module.iam.role_arns["events"]
+  alerts_topic_arn = module.messaging.alerts_topic_arn
+
+  ingestion_function_name       = module.ingestion.function_name
+  json_to_parquet_function_name = module.json_to_parquet.function_name
+  data_quality_function_name    = module.data_quality.function_name
+  bronze_to_silver_job_name     = module.glue_jobs.bronze_to_silver_job_name
+  silver_to_gold_job_name       = module.glue_jobs.silver_to_gold_job_name
+
+  definition_path  = "${path.root}/../../../orchestration/pipeline.asl.json.tpl"
+  schedule_enabled = var.pipeline_schedule_enabled
+}

@@ -142,6 +142,21 @@ data "aws_iam_policy_document" "sfn_access" {
     actions   = ["sns:Publish"]
     resources = [var.sns_topic_arn]
   }
+  # Step Functions execution logging needs these, and AWS only allows "*" for them.
+  statement {
+    sid = "StateMachineLogging"
+    actions = [
+      "logs:CreateLogDelivery",
+      "logs:GetLogDelivery",
+      "logs:UpdateLogDelivery",
+      "logs:DeleteLogDelivery",
+      "logs:ListLogDeliveries",
+      "logs:PutResourcePolicy",
+      "logs:DescribeResourcePolicies",
+      "logs:DescribeLogGroups",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "sfn_access" {

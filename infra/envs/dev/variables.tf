@@ -27,3 +27,10 @@ variable "youtube_regions" {
   type        = list(string)
   default     = ["US", "GB"]
 }
+
+
+variable "pipeline_schedule_enabled" {
+  description = "Whether the EventBridge schedule fires. Keep false until a manual run is green."
+  type        = bool
+  default     = true
+}

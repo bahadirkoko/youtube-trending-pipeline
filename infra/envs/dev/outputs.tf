@@ -48,3 +48,12 @@ output "silver_to_gold_job_name" {
 output "gold_tables" {
   value = module.gold_tables.table_names
 }
+
+
+output "state_machine_arn" {
+  value = module.orchestration.state_machine_arn
+}
+
+output "pipeline_schedule_state" {
+  value = module.orchestration.schedule_state
+}
