@@ -40,3 +40,11 @@ output "bronze_to_silver_job_name" {
 output "data_quality_function_name" {
   value = module.data_quality.function_name
 }
+
+output "silver_to_gold_job_name" {
+  value = module.glue_jobs.silver_to_gold_job_name
+}
+
+output "gold_tables" {
+  value = module.gold_tables.table_names
+}

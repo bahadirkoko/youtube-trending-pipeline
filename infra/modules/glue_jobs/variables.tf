@@ -51,3 +51,13 @@ variable "timeout_minutes" {
   type        = number
   default     = 30
 }
+
+
+variable "gold_bucket_name" {
+  type = string
+}
+
+variable "gold_script_path" {
+  description = "Local path of silver_to_gold.py"
+  type        = string
+}

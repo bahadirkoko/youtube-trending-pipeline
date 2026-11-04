@@ -41,3 +41,45 @@ resource "aws_glue_job" "bronze_to_silver" {
     "--enable-continuous-cloudwatch-log" = "true"
   }
 }
+
+
+locals {
+  gold_job_name   = "${var.project_name}-silver-to-gold-${var.environment}"
+  gold_script_key = "glue_jobs/silver_to_gold.py"
+}
+
+resource "aws_s3_object" "silver_to_gold_script" {
+  bucket = var.scripts_bucket_name
+  key    = local.gold_script_key
+  source = var.gold_script_path
+  etag   = filemd5(var.gold_script_path)
+}
+
+# Name matches <project>-*-<env>, as the Step Functions role in the iam module requires.
+resource "aws_glue_job" "silver_to_gold" {
+  name        = local.gold_job_name
+  description = "Silver trending_videos to the four Gold analytics tables"
+  role_arn    = var.glue_role_arn
+
+  glue_version      = var.glue_version
+  worker_type       = var.worker_type
+  number_of_workers = var.number_of_workers
+  timeout           = var.timeout_minutes
+  max_retries       = 0
+
+  command {
+    name            = "glueetl"
+    script_location = "s3://${aws_s3_object.silver_to_gold_script.bucket}/${aws_s3_object.silver_to_gold_script.key}"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--silver_bucket" = var.silver_bucket_name
+    "--gold_bucket"   = var.gold_bucket_name
+
+    "--job-language"                     = "python"
+    "--job-bookmark-option"              = "job-bookmark-disable"
+    "--enable-metrics"                   = "true"
+    "--enable-continuous-cloudwatch-log" = "true"
+  }
+}

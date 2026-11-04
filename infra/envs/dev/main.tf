@@ -98,6 +98,13 @@ module "silver_tables" {
   silver_bucket_name = module.data_lake.bucket_names["silver"]
 }
 
+module "gold_tables" {
+  source = "../../modules/gold_tables"
+
+  database_name    = module.glue_catalog.database_names["gold"]
+  gold_bucket_name = module.data_lake.bucket_names["gold"]
+}
+
 # Phase 3: Athena workgroup (results location + scan limit)
 module "athena" {
   source = "../../modules/athena"
@@ -121,4 +128,7 @@ module "glue_jobs" {
   bronze_bucket_name  = module.data_lake.bucket_names["bronze"]
   silver_bucket_name  = module.data_lake.bucket_names["silver"]
   script_path         = "${path.root}/../../../src/glue_jobs/bronze_to_silver.py"
+
+  gold_bucket_name = module.data_lake.bucket_names["gold"]
+  gold_script_path = "${path.root}/../../../src/glue_jobs/silver_to_gold.py"
 }
