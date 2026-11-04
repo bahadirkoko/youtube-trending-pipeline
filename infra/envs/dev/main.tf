@@ -155,3 +155,21 @@ module "orchestration" {
   definition_path  = "${path.root}/../../../orchestration/pipeline.asl.json.tpl"
   schedule_enabled = var.pipeline_schedule_enabled
 }
+
+# Phase 7: alarms and dashboard
+module "monitoring" {
+  source = "../../modules/monitoring"
+
+  project_name      = var.project_name
+  environment       = local.environment
+  region            = var.aws_region
+  alerts_topic_arn  = module.messaging.alerts_topic_arn
+  state_machine_arn = module.orchestration.state_machine_arn
+  schedule_enabled  = var.pipeline_schedule_enabled
+
+  lambda_function_names = {
+    ingestion       = module.ingestion.function_name
+    json-to-parquet = module.json_to_parquet.function_name
+    data-quality    = module.data_quality.function_name
+  }
+}

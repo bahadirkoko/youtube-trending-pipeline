@@ -57,3 +57,12 @@ output "state_machine_arn" {
 output "pipeline_schedule_state" {
   value = module.orchestration.schedule_state
 }
+
+
+output "dashboard_url" {
+  value = module.monitoring.dashboard_url
+}
+
+output "alarm_names" {
+  value = module.monitoring.alarm_names
+}
