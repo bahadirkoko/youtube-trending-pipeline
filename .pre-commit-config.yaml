@@ -1,0 +1,46 @@
+# Runs automatically on `git commit` once installed:  pre-commit install
+# Run on every file by hand:                           pre-commit run --all-files
+# Bump the pinned hook versions:                       pre-commit autoupdate
+#
+# ruff and terraform run from your own environment (language: system), so the
+# versions are the same as `make lint` and `make tf-fmt`. Activate .venv first.
+
+exclude: ^data/ # raw datasets are never touched by the hooks
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format
+        language: system
+        types: [python]
+      - id: terraform-fmt
+        name: terraform fmt
+        entry: terraform fmt
+        language: system
+        types: [terraform]
+      - id: nbstripout
+        name: strip notebook outputs
+        entry: nbstripout
+        language: system
+        files: \.ipynb$
