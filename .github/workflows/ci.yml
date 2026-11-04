@@ -16,7 +16,7 @@ permissions:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,7 +30,7 @@ jobs:
 
   test:
     name: Tests (incl. Spark)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -38,7 +38,7 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: requirements-ci.txt
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -47,7 +47,7 @@ jobs:
 
   terraform:
     name: Terraform fmt and validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
