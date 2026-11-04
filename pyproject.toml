@@ -1,4 +1,5 @@
 [tool.pytest.ini_options]
+markers = ["spark: needs Java and a local Spark session (slow)"]
 testpaths = ["tests"]
 addopts = "-ra"
 

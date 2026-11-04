@@ -56,3 +56,5 @@ backfill-dry: ## Show what backfill would upload, without uploading
 
 set-secret: ## Store the YouTube API key in Secrets Manager
 	./scripts/set_youtube_key.sh
+test-fast: ## Tests without Spark (about 1 second)
+	pytest -m "not spark" -q

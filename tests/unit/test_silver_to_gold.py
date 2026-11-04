@@ -20,6 +20,8 @@ if shutil.which("java") is None:
 from pyspark.sql import SparkSession  # noqa: E402
 from pyspark.sql import types as T  # noqa: E402
 
+pytestmark = pytest.mark.spark
+
 JOB_PATH = Path(__file__).resolve().parents[2] / "src" / "glue_jobs" / "silver_to_gold.py"
 
 SILVER_SCHEMA = T.StructType(

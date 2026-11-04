@@ -21,6 +21,8 @@ if shutil.which("java") is None:
 from pyspark.sql import SparkSession  # noqa: E402
 from pyspark.sql import functions as F  # noqa: E402
 
+pytestmark = pytest.mark.spark
+
 JOB_PATH = Path(__file__).resolve().parents[2] / "src" / "glue_jobs" / "bronze_to_silver.py"
 
 
