@@ -38,6 +38,8 @@ tf-fmt-check: ## Fail if any Terraform file is not formatted
 tf-validate: ## terraform validate for bootstrap and dev (run terraform init in each first)
 	terraform -chdir=infra/bootstrap validate
 	terraform -chdir=infra/envs/dev validate
+	terraform -chdir=infra/envs/prod validate
+	terraform -chdir=infra/envs/dev validate
 
 # ---------- Operating the pipeline ----------
 pipeline-run: ## Start one pipeline execution now
