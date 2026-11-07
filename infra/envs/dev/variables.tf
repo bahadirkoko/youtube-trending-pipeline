@@ -25,7 +25,7 @@ variable "force_destroy_buckets" {
 variable "youtube_regions" {
   description = "Region codes the ingestion Lambda fetches by default"
   type        = list(string)
-  default     = ["US", "GB"]
+  default     = ["CA", "DE", "FR", "GB", "IN", "JP", "KR", "MX", "RU", "US"]
 }
 
 
