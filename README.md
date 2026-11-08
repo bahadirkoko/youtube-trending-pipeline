@@ -75,10 +75,24 @@ The daily schedule is controlled by the `pipeline_schedule_enabled` variable.
 ### Query the data
 
 ```bash
-make query Q=sql/queries/01_top_videos.sql
+make query Q=sql/queries/01_top_channels.sql
 ```
 
-See `sql/queries/` for the full set of example queries.
+Example: the top channels by total peak views (a video's peak views counted once, because
+YouTube view counts are cumulative):
+
+| channel_title | videos_trended | total_trending_days | total_peak_views | top_video_title |
+|---|---|---|---|---|
+| ibighit | 9 | 80 | 271,753,404 | BTS (방탄소년단) 'FAKE LOVE' Official MV |
+| ChildishGambinoVEVO | 1 | 25 | 225,211,923 | Childish Gambino - This Is America (Official Video) |
+| Dude Perfect | 12 | 131 | 206,044,429 | Real Life Trick Shots 2 \| Dude Perfect |
+| Marvel Entertainment | 16 | 125 | 204,282,789 | Marvel Studios' Avengers: Infinity War Official Trailer |
+| Ed Sheeran | 5 | 47 | 169,017,417 | Ed Sheeran - Happier (Official Video) |
+
+The older titles come from the historical Kaggle dataset (2017-2018) loaded into Bronze. New
+rows from the daily API ingestion are added on top of it. See `sql/queries/` for six more
+queries.
+
 
 ## Cost
 
