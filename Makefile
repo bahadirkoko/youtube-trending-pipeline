@@ -3,7 +3,7 @@
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install format lint test check tf-fmt tf-fmt-check tf-validate \
+.PHONY: help install format lint test test-fast check tf-fmt tf-fmt-check tf-validate \
     pipeline-run query backfill backfill-dry set-secret
 
 help: ## Show this list
@@ -26,6 +26,9 @@ lint: ## Lint and check formatting (changes nothing)
 test: ## Run all tests (the Spark ones need Java and take about a minute)
 	pytest -q
 
+test-fast: ## Tests without Spark (about 1 second)
+	pytest -m "not spark" -q
+
 check: lint tf-fmt-check test ## Everything CI runs, locally
 
 # ---------- Terraform ----------
@@ -35,11 +38,10 @@ tf-fmt: ## Format all Terraform files
 tf-fmt-check: ## Fail if any Terraform file is not formatted
 	terraform fmt -check -recursive infra
 
-tf-validate: ## terraform validate for bootstrap and dev (run terraform init in each first)
+tf-validate: ## terraform validate for bootstrap, dev and prod (run terraform init in each first)
 	terraform -chdir=infra/bootstrap validate
 	terraform -chdir=infra/envs/dev validate
 	terraform -chdir=infra/envs/prod validate
-	terraform -chdir=infra/envs/dev validate
 
 # ---------- Operating the pipeline ----------
 pipeline-run: ## Start one pipeline execution now
@@ -58,5 +60,3 @@ backfill-dry: ## Show what backfill would upload, without uploading
 
 set-secret: ## Store the YouTube API key in Secrets Manager
 	./scripts/set_youtube_key.sh
-test-fast: ## Tests without Spark (about 1 second)
-	pytest -m "not spark" -q
