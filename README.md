@@ -7,7 +7,7 @@ the YouTube Data API, cleans and validates them, and builds analytics tables you
 SQL in Athena. It follows the medallion pattern (Bronze → Silver → Gold) and everything is
 defined as code with Terraform.
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/images/architecture.png)
 
 ## What it does
 

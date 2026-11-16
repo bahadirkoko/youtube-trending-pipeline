@@ -4,27 +4,27 @@ This document explains how the pipeline is put together and why. For operating i
 recovery, rebuild) see [`runbook.md`](runbook.md). For the quick overview see the
 [README](../README.md).
 
-![Architecture](architecture.png)
+![Architecture](images/architecture.png)
 
 ## 1. Data flow
 
-| Layer | Location | Contents | Written by |
-|---|---|---|---|
-| Bronze | `s3://<bronze>/youtube/raw_statistics/region=XX/date=YYYY-MM-DD/hour=HH/*.json` | Raw API responses, exactly as received. Historical Kaggle CSVs and category reference JSON also land here. | Ingestion Lambda, one-time Kaggle load |
-| Silver | `s3://<silver>/youtube/trending_videos/region=XX/` | One typed, deduplicated Parquet table of trending videos, plus the category lookup. | `bronze_to_silver` Glue job, `json_to_parquet` Lambda |
-| Gold | `s3://<gold>/youtube/<table>/region=XX/` | Four analytics tables built from Silver. | `silver_to_gold` Glue job |
+| Layer  | Location                                                                          | Contents                                                                                                   | Written by                                                |
+| ------ | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Bronze | `s3://<bronze>/youtube/raw_statistics/region=XX/date=YYYY-MM-DD/hour=HH/*.json` | Raw API responses, exactly as received. Historical Kaggle CSVs and category reference JSON also land here. | Ingestion Lambda, one-time Kaggle load                    |
+| Silver | `s3://<silver>/youtube/trending_videos/region=XX/`                              | One typed, deduplicated Parquet table of trending videos, plus the category lookup.                        | `bronze_to_silver` Glue job, `json_to_parquet` Lambda |
+| Gold   | `s3://<gold>/youtube/<table>/region=XX/`                                        | Four analytics tables built from Silver.                                                                   | `silver_to_gold` Glue job                               |
 
 Bronze is never modified after it is written, so Silver and Gold can always be rebuilt from it.
 That is the main reason the raw layer exists.
 
 ### Gold tables
 
-| Table | Grain | Used for |
-|---|---|---|
-| `video_trending_history` | one row per video per region | How long and how high each video trended |
-| `trending_analytics` | one row per region per trending day | Daily volume and engagement |
-| `channel_analytics` | one row per channel per region | Which channels trend most |
-| `category_analytics` | one row per category per region | Which categories trend most |
+| Table                      | Grain                               | Used for                                 |
+| -------------------------- | ----------------------------------- | ---------------------------------------- |
+| `video_trending_history` | one row per video per region        | How long and how high each video trended |
+| `trending_analytics`     | one row per region per trending day | Daily volume and engagement              |
+| `channel_analytics`      | one row per channel per region      | Which channels trend most                |
+| `category_analytics`     | one row per category per region     | Which categories trend most              |
 
 YouTube view counts are cumulative: a video that trends for 10 days reports a larger number each
 day. Summing daily views would count the same views many times, so the channel and category
@@ -55,14 +55,14 @@ switched on after a green manual run.
 
 Six checks run against Silver on every execution:
 
-| Check | What it catches |
-|---|---|
-| Row count | Empty or collapsed tables |
-| Files readable | Corrupt or partially written Parquet |
-| Schema | Missing, extra or wrongly typed columns |
-| Null rates | A source field that silently stopped arriving |
-| Value ranges | Negative counts, impossible dates, unknown regions |
-| Freshness | Ingestion that stopped. Applied only to rows from the live API, so the historical Kaggle data cannot make it fail. |
+| Check          | What it catches                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Row count      | Empty or collapsed tables                                                                                          |
+| Files readable | Corrupt or partially written Parquet                                                                               |
+| Schema         | Missing, extra or wrongly typed columns                                                                            |
+| Null rates     | A source field that silently stopped arriving                                                                      |
+| Value ranges   | Negative counts, impossible dates, unknown regions                                                                 |
+| Freshness      | Ingestion that stopped. Applied only to rows from the live API, so the historical Kaggle data cannot make it fail. |
 
 Thresholds are environment variables with sensible defaults and can be overridden per execution
 through the event. The Lambda returns a structured result, and on failure it also publishes the
@@ -116,25 +116,25 @@ the failure that does not produce an error: a disabled or broken schedule.
 
 ## 6. Testing strategy
 
-| Level | What it covers | Needs |
-|---|---|---|
-| Unit | Each Lambda handler (with moto), each Spark job (local Spark), the state machine definition (structure, transitions, timeouts, retries) | Java for Spark tests |
-| Contract | Column lists in the Spark jobs, Terraform tables, DDL files and quality gate stay identical | Nothing |
-| Integration | Raw API JSON through the real Silver job, the real quality gate, and the real Gold job, checking row counts match at each step | Java |
-| Static | ruff, `terraform fmt`, `terraform validate` for every environment | Nothing |
+| Level       | What it covers                                                                                                                          | Needs                |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| Unit        | Each Lambda handler (with moto), each Spark job (local Spark), the state machine definition (structure, transitions, timeouts, retries) | Java for Spark tests |
+| Contract    | Column lists in the Spark jobs, Terraform tables, DDL files and quality gate stay identical                                             | Nothing              |
+| Integration | Raw API JSON through the real Silver job, the real quality gate, and the real Gold job, checking row counts match at each step          | Java                 |
+| Static      | ruff, `terraform fmt`, `terraform validate` for every environment                                                                   | Nothing              |
 
 Everything above runs in GitHub Actions without AWS credentials. `make test-fast` skips the
 Spark tests for quick feedback while editing.
 
 ## 7. Failure modes
 
-| What breaks | What happens | How you find out |
-|---|---|---|
-| One region's API call fails | Other regions continue; the region is listed as failed | Success email shows it under "failed at ingestion" |
-| Source data is bad or missing | Quality gate fails, Gold is not built, previous Gold stays intact | Gate failure email with the failed checks |
-| A Glue job fails | The step fails after retries and the execution stops | Failure email and the `pipeline-failed` alarm |
-| A Lambda errors repeatedly | Alarm fires | Lambda error alarm emails |
-| The schedule stops firing | No execution runs | `pipeline-not-running` alarm after two days |
+| What breaks                   | What happens                                                      | How you find out                                   |
+| ----------------------------- | ----------------------------------------------------------------- | -------------------------------------------------- |
+| One region's API call fails   | Other regions continue; the region is listed as failed            | Success email shows it under "failed at ingestion" |
+| Source data is bad or missing | Quality gate fails, Gold is not built, previous Gold stays intact | Gate failure email with the failed checks          |
+| A Glue job fails              | The step fails after retries and the execution stops              | Failure email and the `pipeline-failed` alarm    |
+| A Lambda errors repeatedly    | Alarm fires                                                       | Lambda error alarm emails                          |
+| The schedule stops firing     | No execution runs                                                 | `pipeline-not-running` alarm after two days      |
 
 ## 8. Known limitations and next steps
 
