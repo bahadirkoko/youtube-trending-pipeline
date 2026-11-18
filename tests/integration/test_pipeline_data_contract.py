@@ -4,13 +4,13 @@ The unit tests check each stage with hand-made input. This checks the stages aga
 each other: the Silver job's real output must satisfy the real quality gate, and the
 Gold job must read that same output and agree with it on row counts.
 
-Needs Java 17+ and pyspark; skipped otherwise.
+Needs Java 17. If it is missing, conftest.py stops the run with an error instead of
+skipping these tests. Use `make test-fast` to run only the non-Spark tests.
 """
 
 import importlib.util
 import json
 import os
-import shutil
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -18,12 +18,7 @@ from pathlib import Path
 import boto3
 import pytest
 from moto import mock_aws
-
-pytest.importorskip("pyspark")
-if shutil.which("java") is None:
-    pytest.skip("Java is not installed", allow_module_level=True)
-
-from pyspark.sql import SparkSession  # noqa: E402
+from pyspark.sql import SparkSession
 
 pytestmark = pytest.mark.spark
 

@@ -24,7 +24,8 @@ for table columns, `docs/development.md` for local setup.
 - `make help` lists all targets. Use Makefile targets over raw commands.
 - `make check` = ruff + terraform fmt check + all 136 tests. **Must pass before
   every commit.** `make test-fast` skips the Spark tests (marker: `spark`).
-- Spark tests need Java 17 and set PYSPARK_PYTHON themselves.
+- Spark tests need Java 17 and set PYSPARK_PYTHON themselves. If Java 17 is not
+  usable, `tests/conftest.py` stops the run with an error (never a silent skip).
 - `make pipeline-run` starts a real Step Functions execution (costs ~4¢, sends
   email). Don't run it casually.
 - `make query Q=sql/queries/<file>.sql` runs an Athena query.

@@ -1,24 +1,18 @@
 """Tests for the silver_to_gold Glue job, run on a real local Spark.
 
-Needs Java 17+ and `pip install pyspark==3.5.4`. If either is missing, every test in
-this file is skipped (the rest of the suite still runs).
+Needs Java 17. If it is missing, conftest.py stops the run with an error instead of
+skipping these tests. Use `make test-fast` to run only the non-Spark tests.
 """
 
 import importlib.util
 import os
-import shutil
 import sys
 from datetime import date
 from pathlib import Path
 
 import pytest
-
-pytest.importorskip("pyspark")
-if shutil.which("java") is None:
-    pytest.skip("Java is not installed", allow_module_level=True)
-
-from pyspark.sql import SparkSession  # noqa: E402
-from pyspark.sql import types as T  # noqa: E402
+from pyspark.sql import SparkSession
+from pyspark.sql import types as T
 
 pytestmark = pytest.mark.spark
 

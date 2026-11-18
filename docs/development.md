@@ -55,9 +55,9 @@ make check
 
 You should see ruff and `terraform fmt` pass and **136 passed** from pytest.
 
-> If pytest reports `96 passed` and some skipped tests instead, Java was not found. The Spark
-> test files skip themselves when `java` is not on the `PATH`, so a missing Java does not fail
-> the run. It just hides 40 tests. Fix Java before trusting a green result.
+If Java 17 is missing, broken or a different version, pytest stops before running anything
+and prints `Spark tests are selected but Java 17 is not usable: <reason>`. The Spark tests are
+never skipped silently, so a green `make check` always means all 136 ran.
 
 ### Local `.env` (optional)
 
@@ -129,7 +129,11 @@ tests/
 - Tests can never reach a real AWS account: `conftest.py` sets fake credentials and removes
   `AWS_PROFILE` for every test, and AWS calls go to moto.
 - Tests marked `spark` start a local Spark session and set `PYSPARK_PYTHON` themselves.
-  `make test-fast` skips them with `-m "not spark"`.
+  `make test-fast` leaves them out with `-m "not spark"`, and then Java is not needed at all.
+- When any `spark` test is selected, `conftest.py` first runs `java -version` (using
+  `$JAVA_HOME/bin/java` if set, otherwise `java` on the `PATH`, like Spark) and stops the run
+  unless it is Java 17. It runs the binary on purpose: on macOS `/usr/bin/java` exists even
+  without a JDK.
 - Glue jobs expose `run(spark, src, dst)`, so a test passes local temp folders where Glue
   passes S3 paths. Keep new jobs in the same shape.
 
@@ -187,7 +191,9 @@ and Terraform are valid, not that a deploy will succeed.
 
 | Problem                                              | Fix                                                                                 |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Fewer than 136 tests pass and some are skipped       | Java is missing or not on the `PATH`. Check `java -version`.                        |
+| `Java 17 is not usable: no java found`               | Install it (`brew install openjdk@17`) and put it on the `PATH` or set `JAVA_HOME`. |
+| `Java 17 is not usable: ... Unable to locate a Java Runtime` | macOS's `/usr/bin/java` stub found no JDK. Install one as above.            |
+| `Java 17 is not usable: ... is Java 21`              | Point `JAVA_HOME` at a Java 17 JDK (`/usr/libexec/java_home -v 17` prints it on macOS). |
 | Spark tests fail with `Python worker` or version errors | Run pytest from the activated venv, so Spark uses the same Python.               |
 | A commit is rejected by `ruff` or `terraform fmt`    | The hook already fixed the file. `git add` it and commit again.                     |
 | `pre-commit` or `ruff` not found when committing     | Activate the venv: `source .venv/bin/activate`.                                     |
