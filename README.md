@@ -56,10 +56,14 @@ You need Python 3.12, Java 17 (for the Spark tests), Terraform 1.x, and an AWS a
 credentials configured.
 
 ```bash
-make install        # create the venv and install dependencies
-make check          # lint, terraform fmt, and all tests
-make help           # list every available command
+make install                # create .venv with Python 3.12, install dependencies and git hooks
+source .venv/bin/activate   # every other make target expects the venv to be active
+make check                  # lint, terraform fmt, and all tests
+make help                   # list every available command
 ```
+
+See [`docs/development.md`](docs/development.md) for the full local setup, tests and pre-commit
+hooks.
 
 ### Deploy to AWS
 
@@ -112,7 +116,12 @@ Step Functions, Athena and S3 are a few cents a month at this data size.
 - **`prod` is code only.** It shows the dev-to-prod promotion pattern without paying for a second
   deployment.
 
-See [`docs/runbook.md`](docs/runbook.md) for operations: alerts, recovery and rebuild steps.
+## Documentation
+
+- [`docs/architecture.md`](docs/architecture.md): design decisions, failure modes and testing strategy
+- [`docs/data-dictionary.md`](docs/data-dictionary.md): every Silver and Gold table, column by column
+- [`docs/development.md`](docs/development.md): local setup, tests and making changes
+- [`docs/runbook.md`](docs/runbook.md): operations, alerts, recovery and rebuild steps
 
 ## CI
 

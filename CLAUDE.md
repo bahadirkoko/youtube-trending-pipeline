@@ -4,7 +4,8 @@ Serverless YouTube trending data pipeline on AWS (portfolio project). Medallion
 architecture: Bronze (raw JSON/CSV) → Silver (typed Parquet) → Gold (4 analytics
 tables), queried with Athena. Orchestrated by Step Functions on a daily
 EventBridge schedule. See `README.md` for the overview, `docs/architecture.md`
-for design decisions, `docs/runbook.md` for operations.
+for design decisions, `docs/runbook.md` for operations, `docs/data-dictionary.md`
+for table columns, `docs/development.md` for local setup.
 
 ## Environment facts
 
@@ -39,7 +40,7 @@ for design decisions, `docs/runbook.md` for operations.
 - Column lists are duplicated on purpose across Spark jobs, Terraform tables,
   `sql/ddl/`, and the data-quality gate — `tests/unit/test_schema_contracts.py`
   enforces they match. When changing a schema, update all four and the test will
-  tell you what you missed.
+  tell you what you missed. Also update `docs/data-dictionary.md` (not test-enforced).
 - Views are cumulative in YouTube data: per-channel/category totals must use each
   video's **peak** views, never sum daily views.
 - Glue writes use dynamic partition overwrite; keep it that way so re-runs replace

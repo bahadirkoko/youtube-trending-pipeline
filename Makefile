@@ -10,9 +10,17 @@ help: ## Show this list
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-16s %s\n", $$1, $$2}'
 
 # ---------- setup ----------
-install: ## Install dev dependencies and the git hooks
-	pip install -r requirements-dev.txt
-	pre-commit install
+PYTHON ?= python3.12
+VENV := .venv
+
+install: ## Create .venv (Python 3.12), install dev dependencies and the git hooks
+	@command -v $(PYTHON) >/dev/null || { echo "$(PYTHON) not found. Install Python 3.12 (macOS: brew install python@3.12)."; exit 1; }
+	test -d $(VENV) || $(PYTHON) -m venv $(VENV)
+	@$(VENV)/bin/python -c 'import sys; sys.exit(sys.version_info[:2] != (3, 12))' || { echo "$(VENV) is not Python 3.12. Delete it (rm -rf $(VENV)) and run make install again."; exit 1; }
+	$(VENV)/bin/python -m pip install --upgrade pip
+	$(VENV)/bin/python -m pip install -r requirements-dev.txt
+	$(VENV)/bin/pre-commit install
+	@echo "Done. Activate the venv with:  source $(VENV)/bin/activate"
 
 # ---------- Python quality ----------
 format: ## Reformat all Python code

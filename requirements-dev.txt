@@ -6,11 +6,15 @@
 #   - Lambdas: src/lambdas/<name>/requirements.txt (or an AWS-managed layer)
 #   - Glue:    PySpark, boto3, etc. are already provided by the Glue runtime
 #
-# Versions are lower-bounded so pip can resolve them. Once things work,
-# freeze exact versions:  pip freeze > requirements-lock.txt
+# Everything CI uses comes from requirements-ci.txt with exact versions
+# (pyspark, ruff, pytest, moto, ...), so local results match CI. The extras
+# below are local-only tools and are lower-bounded so pip can resolve them.
 #
-# Install:  pip install -r requirements-dev.txt
+# Install:  make install   (creates .venv with Python 3.12 first)
 # ============================================================
+
+# ---------- Exact versions shared with CI ----------
+-r requirements-ci.txt
 
 # ---------- AWS SDK ----------
 boto3>=1.34
@@ -43,8 +47,5 @@ ipykernel>=6.29
 matplotlib>=3.8
 nbstripout>=0.7           # strips notebook outputs before commit
 
-# ---------- Optional: run Glue PySpark jobs locally ----------
-# Heavy download and needs Java 11/17 installed. Uncomment only when you
-# start testing the Glue jobs on your machine.
-# Glue 4.0 uses Spark 3.3, Glue 5.0 uses Spark 3.5.
-pyspark==3.5.4
+# pyspark is pinned in requirements-ci.txt (3.5.x, matching Glue 5.0's Spark 3.5).
+# The Spark tests also need Java 17.
