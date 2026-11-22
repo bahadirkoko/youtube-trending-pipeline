@@ -37,6 +37,10 @@ Silver mixes two sources, which you can tell apart by the `source` column:
 
 Because there is an 8-year gap between the two, daily charts jump from 2018 to 2026.
 
+The historical rows come from the Kaggle dataset
+[Trending YouTube Video Statistics](https://www.kaggle.com/datasets/datasnaek/youtube-new)
+(`datasnaek/youtube-new`), loaded into Bronze once with `make backfill`.
+
 ## Silver
 
 ### `trending_videos`

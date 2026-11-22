@@ -30,7 +30,9 @@ success email. A failure at any step sends a failure email and stops the run.
 - **A missed ingestion day cannot be recovered.** The YouTube API only returns what is
   trending *now*. If ingestion fails for a day, that day's live data is gone for good.
   Fix ingestion problems first and quickly.
-- The Kaggle history (2017-2018) can be re-uploaded at any time with `make backfill`.
+- The Kaggle history (2017-2018) can be re-uploaded at any time with `make backfill`. It reads
+  `data/raw/`, which is gitignored; the CSVs come from the
+  [Kaggle dataset](https://www.kaggle.com/datasets/datasnaek/youtube-new).
 
 ## Alerts and what to do
 

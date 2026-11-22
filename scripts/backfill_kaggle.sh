@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Upload the Kaggle historical files from data/ to the Bronze bucket.
+# Source dataset: https://www.kaggle.com/datasets/datasnaek/youtube-new
+# (data/raw/ is gitignored, so download the <RR>videos.csv files there first).
 #
 #   data/raw/<RR>videos.csv            -> s3://<bronze>/youtube/kaggle_raw/region=<RR>/
 #   data/reference/<RR>_category_id.json -> s3://<bronze>/youtube/kaggle_reference/region=<RR>/
@@ -56,6 +58,7 @@ done
 
 if [[ $csv_count -eq 0 || $json_count -eq 0 ]]; then
   echo "ERROR: expected files not found (csv: $csv_count, json: $json_count). Check data/raw and data/reference."
+  echo "Download the CSVs from https://www.kaggle.com/datasets/datasnaek/youtube-new into data/raw/."
   exit 1
 fi
 

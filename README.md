@@ -67,14 +67,35 @@ hooks.
 
 ### Deploy to AWS
 
-1. `cd infra/bootstrap && terraform init && terraform apply` creates the remote state bucket.
-2. Put that bucket name in `infra/envs/dev/backend.tf`.
-3. `cd infra/envs/dev && terraform init && terraform apply -var alert_email=you@example.com`
-   deploys everything. Confirm the SNS subscription email.
-4. Store your YouTube API key in Secrets Manager (`make set-secret`).
-5. Run the pipeline once by hand with `make pipeline-run`.
+Everything deploys to **`us-east-1`**. The AWS SDK for pandas Lambda layer ARN in
+`infra/envs/dev/main.tf` is region-specific, so another region also needs that ARN changed
+(see the [layer list](https://aws-sdk-pandas.readthedocs.io/en/stable/layers.html)).
 
-The daily schedule is controlled by the `pipeline_schedule_enabled` variable.
+1. **Get a YouTube Data API key.** In the [Google Cloud Console](https://console.cloud.google.com/),
+   create a project, enable **YouTube Data API v3** under *APIs & Services → Library*, then
+   create an API key under *APIs & Services → Credentials*. The free quota (10,000 units a day)
+   is far more than the pipeline uses.
+2. **Download the historical data.** Get the
+   [Trending YouTube Video Statistics](https://www.kaggle.com/datasets/datasnaek/youtube-new)
+   dataset from Kaggle (free account needed) and put the ten `<RR>videos.csv` files
+   (`USvideos.csv`, `GBvideos.csv`, ...) in `data/raw/`. The category JSON files are already in
+   `data/reference/`. With the [Kaggle CLI](https://github.com/Kaggle/kaggle-api):
+   `kaggle datasets download -d datasnaek/youtube-new -p data/raw --unzip`.
+3. **Create the state bucket.** `cd infra/bootstrap && terraform init && terraform apply`.
+4. **Point Terraform at it.** Replace the `bucket` value in `infra/envs/dev/backend.tf` with
+   the `state_bucket_name` output from step 3. The value in the repo is the author's bucket and
+   will not work for you.
+5. **Deploy.** In `infra/envs/dev`: `cp terraform.tfvars.example terraform.tfvars`, set
+   `alert_email` to your address, then `terraform init`, `terraform plan` and `terraform apply`.
+   Click the SNS confirmation email that arrives.
+6. **Store the API key** in Secrets Manager: `make set-secret` (input is hidden).
+7. **Load the history** into Bronze: `make backfill` (`make backfill-dry` shows what it would
+   upload).
+8. **Run the pipeline once** by hand: `make pipeline-run`. It takes about 5 minutes and sends a
+   success email.
+
+After that it runs daily at 11:00 UTC. The schedule is controlled by the
+`pipeline_schedule_enabled` variable. See [`docs/runbook.md`](docs/runbook.md) if anything fails.
 
 ### Query the data
 

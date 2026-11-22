@@ -1,5 +1,9 @@
 # Copy to terraform.tfvars (git-ignored) and edit:
 #   cp terraform.tfvars.example terraform.tfvars
-aws_region            = "us-east-1"
-alert_email           = "bahadir.kocabas.dev@gmail.com"
+#
+# aws_region: keep us-east-1. The AWS SDK for pandas layer ARN in main.tf is
+# for us-east-1 only; deploying elsewhere needs that ARN changed too.
+aws_region = "us-east-1"
+# alert_email: where failure and success emails go. Use your own address.
+alert_email           = "you@example.com"
 force_destroy_buckets = true
