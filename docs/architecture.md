@@ -61,7 +61,7 @@ Six checks run against Silver on every execution:
 | Files readable | Corrupt or partially written Parquet                                                                               |
 | Schema         | Missing, extra or wrongly typed columns                                                                            |
 | Null rates     | A source field that silently stopped arriving                                                                      |
-| Value ranges   | Negative counts, impossible dates, unknown regions                                                                 |
+| Value ranges   | Negative counts, impossible view counts, like ratios outside 0..1, impossible dates                                |
 | Freshness      | Ingestion that stopped. Applied only to rows from the live API, so the historical Kaggle data cannot make it fail. |
 
 Thresholds are environment variables with sensible defaults and can be overridden per execution
@@ -77,7 +77,8 @@ files. With 10 regions the partition count stays small and every query can prune
 **Partition projection instead of crawlers.** The region values are a known, fixed list, so the
 Glue tables declare them as an enum projection. New data is queryable immediately, there is
 nothing to crawl or repair, and no crawler cost or schedule to maintain. The trade-off is that
-adding a region means updating the projection (and the quality gate's list).
+adding a region means updating the projection lists in the `silver_tables` and `gold_tables`
+modules as well as the ingestion list.
 
 **Plain PySpark on Glue.** The transformations run on a real Spark engine, and the same Python
 files run unchanged in the local test suite. There is no Docker image or custom runtime to
