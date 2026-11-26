@@ -148,8 +148,13 @@ After a `terraform destroy` and re-apply the subscription must be confirmed agai
 ### Run the pipeline now
 
 ```bash
-EXEC=$(aws stepfunctions start-execution --state-machine-arn "$(terraform output -raw state_machine_arn)" \
-  --query executionArn --output text)
+make pipeline-run    # from the repo root; prints the execution ARN
+```
+
+To keep the ARN for checking on or stopping the run (works from any folder in the repo):
+
+```bash
+EXEC=$(make -s -C "$(git rev-parse --show-toplevel)" pipeline-run)
 aws stepfunctions describe-execution --execution-arn "$EXEC" --query status --output text
 ```
 
@@ -170,9 +175,11 @@ aws glue start-job-run --job-name yt-data-pipeline-bronze-to-silver-dev # Silver
 
 ### Query the data
 
+From the repo root:
+
 ```bash
-./scripts/run_query.sh sql/queries/01_top_channels.sql
-./scripts/run_query.sh sql/queries/07_gold_reconciliation.sql   # Silver vs Gold row counts
+make query Q=sql/queries/01_top_channels.sql
+make query Q=sql/queries/07_gold_reconciliation.sql   # Silver vs Gold row counts
 ```
 
 ### Rotate the YouTube API key
