@@ -17,12 +17,14 @@ for table columns, `docs/development.md` for local setup.
   `yt-data-pipeline-<thing>-dev`.
 - The pipeline runs daily at 11:00 UTC and sends SNS emails on success/failure.
   The schedule is live: changes to Lambdas/Glue jobs affect tomorrow's run.
-- 10 YouTube regions are enabled: CA, DE, FR, GB, IN, JP, KR, MX, RU, US.
+- 10 YouTube regions are enabled: CA, DE, FR, GB, IN, JP, KR, MX, RU, US. The single
+  source is `youtube_regions` in each env's `variables.tf`; it feeds ingestion and the
+  Silver/Gold table projections (`tests/unit/test_terraform_wiring.py` guards this).
 
 ## Commands
 
 - `make help` lists all targets. Use Makefile targets over raw commands.
-- `make check` = ruff + terraform fmt check + all 136 tests. **Must pass before
+- `make check` = ruff + terraform fmt check + all 144 tests. **Must pass before
   every commit.** `make test-fast` skips the Spark tests (marker: `spark`).
 - Spark tests need Java 17 and set PYSPARK_PYTHON themselves. If Java 17 is not
   usable, `tests/conftest.py` stops the run with an error (never a silent skip).

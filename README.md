@@ -28,7 +28,7 @@ defined as code with Terraform.
 - **Orchestration:** Step Functions, EventBridge
 - **Alerts and monitoring:** SNS, CloudWatch
 - **Infrastructure:** Terraform (modules, remote state in S3, separate `dev` and `prod` environments)
-- **Quality:** pytest and moto (136 tests including real-Spark integration tests), ruff, pre-commit, GitHub Actions CI
+- **Quality:** pytest and moto (144 tests including real-Spark integration tests), ruff, pre-commit, GitHub Actions CI
 
 ## Repository layout
 

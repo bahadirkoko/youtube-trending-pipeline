@@ -190,9 +190,14 @@ make set-secret
 
 ### Add a region
 
-Add its code to `youtube_regions` in `infra/envs/dev/variables.tf` and `terraform apply`.
-Ingestion currently fetches only the regions in that list. The Athena tables already know
-all 10 region folders.
+Add its two-letter code to `youtube_regions` in `infra/envs/dev/variables.tf`, then
+`terraform plan` and `terraform apply`. That one list drives both ingestion and the Athena
+partition projection of every Silver and Gold table, so the new region is fetched on the next
+run and queryable straight away. Expect the plan to update the ingestion Lambda's
+`YOUTUBE_REGIONS` setting and the six Glue tables' `projection.region.values`.
+
+The region must be one the YouTube API supports for trending videos. Live data for it starts
+on the next run; the Kaggle history only covers the original 10 regions.
 
 ### Pause everything
 

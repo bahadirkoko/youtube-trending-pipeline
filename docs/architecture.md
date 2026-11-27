@@ -77,8 +77,9 @@ files. With 10 regions the partition count stays small and every query can prune
 **Partition projection instead of crawlers.** The region values are a known, fixed list, so the
 Glue tables declare them as an enum projection. New data is queryable immediately, there is
 nothing to crawl or repair, and no crawler cost or schedule to maintain. The trade-off is that
-adding a region means updating the projection lists in the `silver_tables` and `gold_tables`
-modules as well as the ingestion list.
+the region list has to be known up front. Each environment keeps it in one variable,
+`youtube_regions`, which feeds both the ingestion Lambda and every table's projection, so
+adding a region is a one-line change followed by `terraform apply`.
 
 **Plain PySpark on Glue.** The transformations run on a real Spark engine, and the same Python
 files run unchanged in the local test suite. There is no Docker image or custom runtime to

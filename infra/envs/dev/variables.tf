@@ -23,9 +23,14 @@ variable "force_destroy_buckets" {
 }
 
 variable "youtube_regions" {
-  description = "Region codes the ingestion Lambda fetches by default"
+  description = "Region codes the pipeline ingests and Athena can query (Silver and Gold tables)"
   type        = list(string)
   default     = ["CA", "DE", "FR", "GB", "IN", "JP", "KR", "MX", "RU", "US"]
+
+  validation {
+    condition     = length(var.youtube_regions) > 0 && alltrue([for r in var.youtube_regions : can(regex("^[A-Z]{2}$", r))])
+    error_message = "youtube_regions must be a non-empty list of two-letter uppercase codes, e.g. [\"US\", \"GB\"]."
+  }
 }
 
 

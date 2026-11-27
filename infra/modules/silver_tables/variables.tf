@@ -8,7 +8,6 @@ variable "silver_bucket_name" {
 }
 
 variable "regions" {
-  description = "Region codes Athena should look for. Add new regions here to make them queryable."
+  description = "Region codes Athena projects as region=XX partitions. Pass the environment's youtube_regions, so every ingested region is queryable."
   type        = list(string)
-  default     = ["CA", "DE", "FR", "GB", "IN", "JP", "KR", "MX", "RU", "US"]
 }

@@ -96,6 +96,7 @@ module "silver_tables" {
 
   database_name      = module.glue_catalog.database_names["silver"]
   silver_bucket_name = module.data_lake.bucket_names["silver"]
+  regions            = var.youtube_regions # same list as ingestion, so new regions are queryable
 }
 
 module "gold_tables" {
@@ -103,6 +104,7 @@ module "gold_tables" {
 
   database_name    = module.glue_catalog.database_names["gold"]
   gold_bucket_name = module.data_lake.bucket_names["gold"]
+  regions          = var.youtube_regions
 }
 
 # Phase 3: Athena workgroup (results location + scan limit)

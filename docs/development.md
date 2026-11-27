@@ -53,11 +53,11 @@ Then confirm everything works:
 make check
 ```
 
-You should see ruff and `terraform fmt` pass and **136 passed** from pytest.
+You should see ruff and `terraform fmt` pass and **144 passed** from pytest.
 
 If Java 17 is missing, broken or a different version, pytest stops before running anything
 and prints `Spark tests are selected but Java 17 is not usable: <reason>`. The Spark tests are
-never skipped silently, so a green `make check` always means all 136 ran.
+never skipped silently, so a green `make check` always means all 144 ran.
 
 ### Local `.env` (optional)
 
@@ -122,6 +122,7 @@ tests/
     test_silver_to_gold.py            Gold Glue job on local Spark        [spark]
     test_pipeline_definition.py       Step Functions definition: states, retries, timeouts
     test_schema_contracts.py          column lists match across code, Terraform and DDL
+    test_terraform_wiring.py          every env passes youtube_regions to ingestion and the tables
   integration/
     test_pipeline_data_contract.py    API JSON -> Silver -> gate -> Gold  [spark]
 ```
